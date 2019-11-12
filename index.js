@@ -22,10 +22,15 @@ client_io.use((socket, next) => {
 client_io.on('connection', function(socket) {
     const client_id = socket.handshake.query.client_id;
     console.log(`client id - [${client_id}] connected!`);
-    client_socket_list.push({client_id, socket});
+    const currentLength = client_socket_list.push({
+      client_id, 
+      socket,
+      connected: true
+    });
     
     socket.on('disconnect', function () {
       console.log(`client id - [${client_id}] disconnected!`);
+      client_socket_list[currentLength-1].connected = false;
     });
 });
 
@@ -46,7 +51,8 @@ master_io.on('connection', function(socket) {
     var clients = client_socket_list.map((clients) => {
       return {
         client_id: clients.client_id,
-        ip: clients.socket.handshake.address
+        ip: clients.socket.handshake.address,
+        connected: clients.connected
       };
     })
     socket.emit('client_list', clients);
