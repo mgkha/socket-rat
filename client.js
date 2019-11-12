@@ -27,6 +27,11 @@ standard_input.on('data', function (data) {
 
                 socket.on('command', (cmd) => {
                     console.log(cmd);
+                    socket.emit('result', 'executed!');
+                });
+
+                socket.on('result', (result) => {
+                    console.log(result);
                 });
                 
                 socket.on('reconnecting', (attemptNumber) => {
