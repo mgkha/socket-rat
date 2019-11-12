@@ -13,9 +13,9 @@ standard_input.on('data', function (data) {
     {  
     	var argv = data.split(' ')
         switch(argv[0].trim('')) {
-            case 'connectmaster':
-                socket = io(`http://${argv[2].trim('')}:3000/?app_key=X-TOKEN&master_id=${argv[1].trim('')}`, {
-                            path: '/master'
+            case 'connect':
+                socket = io(`http://${argv[1].trim('')}/?app_key=X-TOKEN&client_id=${argv[2].trim('')}`, {
+                            path: '/rat-server'
                         });
                 socket.on('connect', () => {
                     console.log('Connected to socket server!');
@@ -24,25 +24,20 @@ standard_input.on('data', function (data) {
                 socket.on('client_list', (client_socket_list) => {
                     console.log(client_socket_list)
                 });
+
+                socket.on('command', (cmd) => {
+                    console.log(cmd);
+                });
                 
                 socket.on('reconnecting', (attemptNumber) => {
                     console.log('Reconnecting - ' + attemptNumber);
                 });
                 break;
-            case 'connectclient':
-                    socket = io(`http://${argv[2].trim('')}:3000/?app_key=X-TOKEN&client_id=${argv[1].trim('')}`, {
-                                path: '/client'
-                            });
-                    socket.on('connect', () => {
-                        console.log('Connected to socket server!');
-                    });  
-                    
-                    socket.on('reconnecting', (attemptNumber) => {
-                        console.log('Reconnecting - ' + attemptNumber);
-                    });
-                    break;
             case 'list':
                 socket.emit('client_list');
+                break;
+            case 'command':
+                socket.emit('command', argv[1] , argv.slice(2),join(' '));
                 break;
         }
     }
