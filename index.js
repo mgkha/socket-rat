@@ -29,6 +29,11 @@ io.use((socket, next) => {
         socket,
         connected: true
       });
+
+      socket.on('disconnect', function () {
+        console.log(`[${client_id}] disconnected!`);
+        client_socket_list[currentLength-1].connected = false;
+      });
     }
 
     socket.on('client_list', function () {
@@ -70,12 +75,6 @@ io.use((socket, next) => {
         master.socket.emit('result', result);
       }
     });
-    
-    socket.on('disconnect', function () {
-      console.log(`[${client_id}] disconnected!`);
-      client_socket_list[currentLength-1].connected = false;
-    });
-
 
 });
 
