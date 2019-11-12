@@ -14,7 +14,7 @@ standard_input.on('data', function (data) {
     	var argv = data.split(' ')
         switch(argv[0].trim('')) {
             case 'connectmaster':
-                socket = io('http://localhost:3000?app_key=X-TOKEN&master_id=' + argv[1].trim(''), {
+                socket = io('http://34.70.80.203:3000/?app_key=X-TOKEN&master_id=' + argv[1].trim(''), {
                             path: '/master'
                         });
                 socket.on('connect', () => {
@@ -30,7 +30,7 @@ standard_input.on('data', function (data) {
                 });
                 break;
             case 'connectclient':
-                    socket = io('http://localhost:3000?app_key=X-TOKEN&client_id=' + argv[1].trim(''), {
+                    socket = io('http://34.70.80.203:3000/?app_key=X-TOKEN&client_id=' + argv[1].trim(''), {
                                 path: '/client'
                             });
                     socket.on('connect', () => {

@@ -57,6 +57,6 @@ master_io.on('connection', function(socket) {
   });
 });
 
-server.listen(3000, function() {
+server.listen({host: '0.0.0.0', port: 3000}, function() {
     console.log('listening on *:3000');
 });
