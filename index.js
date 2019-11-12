@@ -54,21 +54,20 @@ io.use((socket, next) => {
       var client = client_socket_list.find(client => client.client_id == target);
 
       if(client) {
-        console.log(client.connected ? 'Executing command!' : 'Client Disconnected');
-        console.log(cmd);
+        console.log(client.connected ? `Executing command! [${cmd}]` : 'Client Disconnected');
         //send command to target client
         client.socket.emit('command', cmd)
 
         //echo to master
         if(master.socket) {
-          master.socket.emit('result', client.connected ? 'Executing command!' : 'Client Disconnected');
+          master.socket.emit('result', client.connected ? `Executing command! [${cmd}]` : 'Client Disconnected');
         }
       }
     });
 
     socket.on('result', (result) => {
       console.log('-----------------------------------------');
-      console.log(client_id);
+      console.log(`[${client_id}]`);
       console.log(result);
       console.log('-----------------------------------------');
       if(master.socket) {
