@@ -17,7 +17,7 @@ io.use((socket, next) => {
 
   io.on('connection', function(socket) {
     const client_id = socket.handshake.query.client_id;
-    console.log(`client id - [${client_id}] connected!`);
+    console.log(`[${client_id}] connected!`);
     const currentLength = client_socket_list.push({
       client_id, 
       socket,
@@ -36,11 +36,15 @@ io.use((socket, next) => {
     });
 
     socket.on('command', function (target, cmd) {
-      console.log(`${cmd} to target ${target}`);
+      console.log(`[${client_id}] sent [${cmd}] to [${target}]`);
+      var client = client_socket_list.find(client => client.client_id == target);
+      if(client) {
+        client.socket.emit('command', cmd)
+      }
     });
     
     socket.on('disconnect', function () {
-      console.log(`client id - [${client_id}] disconnected!`);
+      console.log(`[${client_id}] disconnected!`);
       client_socket_list[currentLength-1].connected = false;
     });
 });

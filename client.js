@@ -37,7 +37,7 @@ standard_input.on('data', function (data) {
                 socket.emit('client_list');
                 break;
             case 'command':
-                socket.emit('command', argv[1] , argv.slice(2),join(' '));
+                socket.emit('command', argv[1] , argv.slice(2).join(' ').trim(''));
                 break;
         }
     }
