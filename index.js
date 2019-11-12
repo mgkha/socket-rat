@@ -49,7 +49,7 @@ io.use((socket, next) => {
       var client = client_socket_list.find(client => client.client_id == target);
 
       if(client) {
-        console.log(`client connection - ${client.connected}`);
+        console.log(client.connected && 'Executing command!');
         //send command to target client
         client.socket.emit('command', cmd)
 
@@ -61,7 +61,8 @@ io.use((socket, next) => {
     });
 
     socket.on('result', (result) => {
-      console.log(`--------------${client_id} --------------`);
+      console.log('-----------------------------------------');
+      console.log(client_id);
       console.log(result);
       console.log('-----------------------------------------');
       if(master.socket) {
