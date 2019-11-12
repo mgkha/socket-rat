@@ -22,28 +22,6 @@ io.use((socket, next) => {
 
     if(master.id == client_id) {
       master.socket = socket;
-      socket.on('client_list', function () {
-        var clients = client_socket_list.map((clients) => {
-          return {
-            client_id: clients.client_id,
-            ip: clients.socket.handshake.address,
-            connected: clients.connected
-          };
-        })
-        socket.emit('client_list', clients);
-      });
-  
-      socket.on('command', function (target, cmd) {
-        console.log(`[${client_id}] sent [${cmd}] to [${target}]`);
-        var client = client_socket_list.find(client => client.client_id == target);
-  
-        if(client) {
-          console.log(`client connection - ${client.connected}`);
-          socket.emit('result', `client connection - ${client.connected}`);
-          client.socket.emit('command', cmd)
-        }
-      });
-
     }
     else {
       const currentLength = client_socket_list.push({
@@ -51,21 +29,50 @@ io.use((socket, next) => {
         socket,
         connected: true
       });
-
-      socket.on('result', (result) => {
-        console.log(`--------------${client_id} --------------`);
-        console.log(result);
-        console.log('-----------------------------------------');
-        if(master.socket) {
-          master.socket.emit('result', result);
-        }
-      });
-      
-      socket.on('disconnect', function () {
-        console.log(`[${client_id}] disconnected!`);
-        client_socket_list[currentLength-1].connected = false;
-      });
     }
+
+    socket.on('client_list', function () {
+      var clients = client_socket_list.map((clients) => {
+        return {
+          client_id: clients.client_id,
+          ip: clients.socket.handshake.address,
+          connected: clients.connected
+        };
+      })
+      if(master.socket) {
+        master.socket.emit('client_list', clients);
+      }
+    });
+
+    socket.on('command', function (target, cmd) {
+      console.log(`[${client_id}] sent [${cmd}] to [${target}]`);
+      var client = client_socket_list.find(client => client.client_id == target);
+
+      if(client) {
+        console.log(`client connection - ${client.connected}`);
+        //send command to target client
+        client.socket.emit('command', cmd)
+
+        //echo to master
+        if(master.socket) {
+          master.socket.emit('result', `client connection - ${client.connected}`);
+        }
+      }
+    });
+
+    socket.on('result', (result) => {
+      console.log(`--------------${client_id} --------------`);
+      console.log(result);
+      console.log('-----------------------------------------');
+      if(master.socket) {
+        master.socket.emit('result', result);
+      }
+    });
+    
+    socket.on('disconnect', function () {
+      console.log(`[${client_id}] disconnected!`);
+      client_socket_list[currentLength-1].connected = false;
+    });
 
 
 });
